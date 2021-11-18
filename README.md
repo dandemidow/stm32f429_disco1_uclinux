@@ -1,5 +1,23 @@
 # stm32f429_disco1_uclinux
 
+The simple script to configurate the buildroot for the stm32f429i-disc1 (stm32f4-discovery) board. <br />
+It takes the latest Linux kernel (5.15.2 version for now) and patches by parameters that reduce the image size.
+
+## how to build
+
+just execute the command:
+```
+python make.py
+```
+it downloads the buildroot, extracts this one and patches with needed configuration for the stm32f429 disco1 board.
+
+## how to flash
+
+when the image is built, just execute the next command:
+```
+python make --flash
+```
+after the flash process is done, reset the board
 
 ## board loading process
 ```
