@@ -12,7 +12,7 @@ def download_buidroot(buildroot_arch: str):
 
     r = requests.head(url)
     file_size = int(r.headers.get('content-length', 0))
-    print(f'Size of file: {file_size}')
+    print(f'downloads file [{file_size}]')
 
     response = requests.get(url, stream=True)
 
@@ -43,6 +43,19 @@ def make_image(buildroot: str):
     if make_process.wait() != 0:
         raise Exception("make command is FAILED")
 
+def flash_image(buildroot):
+    # st-flash --reset write output/images/stm32f429i-disco.bin 0x08000000
+    # st-flash --reset write output/images/stm32f429-disco.dtb 0x08004000
+    # st-flash --reset write output/images/xipImage 0x0800C000
+    memmap = {'0x08000000': 'output/images/stm32f429i-disco.bin',
+              '0x08004000': 'output/images/stm32f429-disco.dtb',
+              '0x0800C000': 'output/images/xipImage'}
+    for address in memmap.keys():
+        file = memmap[address]
+        flash_process = subprocess.Popen(['st-flash', '--reset', 'write', file, address], cwd=buildroot, stderr=subprocess.STDOUT)
+        if flash_process.wait() != 0:
+            raise Exception("flash command is FAILED: {} {}".format(address, file))
+
 def found_and_replace(param: str, new_param: str, lines):
     pt = r'{}[\s=]'.format(param)
     is_found = False
@@ -63,12 +76,18 @@ def introduce_dir(buildroot: str, path: str, folder: str):
 # let's start here
 parser = argparse.ArgumentParser(description="The buildroot configurator script")
 parser.add_argument('--buildroot', dest="buildroot", default="buildroot-2021.08")
+parser.add_argument('--flash', dest='flash', default=False, action='store_true')
 
 args = parser.parse_args()
 
 buildroot = args.buildroot
 ext = "tar.gz"
 buildroot_name = buildroot + "." + ext
+
+if args.flash:
+    flash_image(buildroot)
+    print("flash is completed")
+    exit(0)
 
 if not os.path.isdir(buildroot):
     download_buidroot(buildroot_name)
