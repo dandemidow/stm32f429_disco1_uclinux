@@ -19,6 +19,9 @@ python make --flash
 ```
 after the flash process is done, reset the board
 
+## board pic
+![stm32f429disc1](https://user-images.githubusercontent.com/11336126/142391713-211e9615-c162-4867-8e53-91b61a7d8e65.jpg)
+
 ## board loading process
 ```
 [    0.000000] Booting Linux on physical CPU 0x0
