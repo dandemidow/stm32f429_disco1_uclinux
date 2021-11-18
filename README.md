@@ -15,7 +15,7 @@ it downloads the buildroot, extracts this one and patches with needed configurat
 
 when the image is built, just execute the next command:
 ```
-python make --flash
+python make.py --flash
 ```
 after the flash process is done, reset the board
 
