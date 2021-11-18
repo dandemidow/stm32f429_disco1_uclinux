@@ -3,12 +3,9 @@ import tarfile
 import subprocess
 import os.path
 import re
+import argparse
 from distutils.dir_util import copy_tree
 from tqdm import tqdm
-
-buildroot = "buildroot-2021.08"
-ext = "tar.gz"
-buildroot_name = buildroot + "." + ext
 
 def download_buidroot(buildroot_arch: str):
     url = "https://buildroot.org/downloads/" + buildroot_arch
@@ -63,11 +60,20 @@ def introduce_dir(buildroot: str, path: str, folder: str):
     dst = buildroot + "/" + path + "/" + folder
     copy_tree(folder, dst)
 
+# let's start here
+parser = argparse.ArgumentParser(description="The buildroot configurator script")
+parser.add_argument('--buildroot', dest="buildroot", default="buildroot-2021.08")
+
+args = parser.parse_args()
+
+buildroot = args.buildroot
+ext = "tar.gz"
+buildroot_name = buildroot + "." + ext
+
 if not os.path.isdir(buildroot):
     download_buidroot(buildroot_name)
     extract_here(buildroot_name)
 
-exit(1)
 make_buildroot_config(buildroot)
 
 buildroot_config_file = buildroot + "/.config"
